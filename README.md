@@ -1,2 +1,1 @@
-# arivuu-prod
 # arivuu-website
