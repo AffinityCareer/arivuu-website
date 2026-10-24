@@ -5,8 +5,8 @@
 
   var BRAND = 'Arivuu';
   var OG_IMAGE = 'images/og-image.jpg';
-  var OG_IMAGE_WIDTH = '1200';
-  var OG_IMAGE_HEIGHT = '630';
+  var OG_IMAGE_WIDTH = '2940';
+  var OG_IMAGE_HEIGHT = '1668';
   var OG_IMAGE_ALT = 'Arivuu — India\'s career guidance platform for students, parents and teachers';
   var DEFAULT_KEYWORDS =
     'Arivuu, arivuu.com, Arivuu career guidance, Arivuu career counselling, Arivuu Bangalore, ' +
@@ -140,11 +140,6 @@
     return base + path;
   }
 
-  function shouldPreventIndexing() {
-    var e = env();
-    return e.PREVENT_INDEXING === true || e.UNDER_CONSTRUCTION === true;
-  }
-
   function upsertMeta(attr, key, content) {
     if (!content && content !== '') return;
     var selector = 'meta[' + attr + '="' + key + '"]';
@@ -168,10 +163,7 @@
   }
 
   function applyRobotsDirective() {
-    var block = shouldPreventIndexing();
-    var content = block
-      ? 'noindex, nofollow, noarchive'
-      : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+    var content = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
     upsertMeta('name', 'robots', content);
     upsertMeta('name', 'googlebot', content);
   }
@@ -408,7 +400,7 @@
     upsertMeta('property', 'og:url', canonical);
     upsertMeta('property', 'og:image', image);
     upsertMeta('property', 'og:image:secure_url', image);
-    upsertMeta('property', 'og:image:type', 'image/jpeg');
+    upsertMeta('property', 'og:image:type', 'image/png');
     upsertMeta('property', 'og:image:alt', OG_IMAGE_ALT);
     upsertMeta('property', 'og:image:width', OG_IMAGE_WIDTH);
     upsertMeta('property', 'og:image:height', OG_IMAGE_HEIGHT);

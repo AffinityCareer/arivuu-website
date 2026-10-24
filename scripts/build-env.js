@@ -70,7 +70,6 @@ KNOWN_KEYS.forEach(function (key) {
   }
 });
 
-var preventIndexing = env.PREVENT_INDEXING === true || env.UNDER_CONSTRUCTION === true;
 var siteUrl = (env.SITE_URL || 'https://arivuu.com').replace(/\/$/, '');
 var indexPath = path.join(root, 'index.html');
 
@@ -80,9 +79,9 @@ fs.writeFileSync(
   'window.ARIVUU_ENV = ' + JSON.stringify(env, null, 2) + ';\n'
 );
 
-var robots = preventIndexing
-  ? 'User-agent: *\nDisallow: /\n'
-  : 'User-agent: *\nAllow: /\n\nSitemap: ' + siteUrl + '/sitemap.xml\n';
+// Indexing is always allowed — PREVENT_INDEXING / UNDER_CONSTRUCTION / DEV_MODE
+// (from .env or CI secrets) are intentionally ignored.
+var robots = 'User-agent: *\nAllow: /\n\nSitemap: ' + siteUrl + '/sitemap.xml\n';
 
 fs.writeFileSync(robotsPath, robots);
 
@@ -107,10 +106,8 @@ function updateIndexSocialMeta(html, siteUrl) {
   return html;
 }
 
-function updateIndexRobotsMeta(html, preventIndexing) {
-  var content = preventIndexing
-    ? 'noindex, nofollow, noarchive'
-    : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+function updateIndexRobotsMeta(html) {
+  var content = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
   html = html.replace(/<meta name="robots" content="[^"]*"\s*\/?>/,
     '<meta name="robots" content="' + content + '" />');
   html = html.replace(/<meta name="googlebot" content="[^"]*"\s*\/?>/,
@@ -121,7 +118,7 @@ function updateIndexRobotsMeta(html, preventIndexing) {
 if (fs.existsSync(indexPath)) {
   var html = fs.readFileSync(indexPath, 'utf8');
   var updated = updateIndexSocialMeta(html, siteUrl);
-  updated = updateIndexRobotsMeta(updated, preventIndexing);
+  updated = updateIndexRobotsMeta(updated);
   if (updated !== html) {
     fs.writeFileSync(indexPath, updated);
     console.log('Updated SEO URLs in index.html → ' + siteUrl);
@@ -129,5 +126,5 @@ if (fs.existsSync(indexPath)) {
 }
 
 console.log('Wrote js/env.js');
-console.log('Wrote robots.txt (' + (preventIndexing ? 'noindex' : 'index') + ')');
+console.log('Wrote robots.txt (index)');
 console.log('Social preview image: ' + siteUrl + '/images/og-image.jpg');
